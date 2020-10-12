@@ -20,16 +20,17 @@ def get_Data(index):
 
 
 print("Inicio del programa")
-simbolos = ['AAPL','MSFT','GLOB','KO','FB','INTC','GE','MELI','GOOG','IBM','XOM']
-#simbolos = ['AAPL']
-startdate=date.datetime(2010,1,1)
-enddate=date.datetime(2020,9,29)
+#simbolos = ['AAPL','MSFT','GLOB','KO','FB','INTC','GE','MELI','GOOG','IBM','XOM']
+simbolos = ['AAPL']
+startdate=date.datetime(2010,2,20)
+enddate=date.datetime(2020,9,10)
 
 print("Señal de cocodrillo")
 for indice in range(0, len(simbolos)):
     ticket = get_Data( simbolos[indice] )
     operacion = cocodrillo( ticket, slow=21, fast=3 )
-    print("Ticket: " + simbolos[indice] + "\t Ganacia: " + str(operacion.getGananciaPorcentaje()) )
+    operacion.getAciertos()
+    print("Ticket: " + simbolos[indice] + "\t Ganacia: " + str(operacion.getGananciaPorcentaje()) + "% Operaciones: " + str(operacion.getCntOperaciones())+ "\tFallas: " + str(operacion.getFallas()))
 
 
 #aapl.Close.plot()

@@ -48,6 +48,14 @@ class Operacion():
     def loadOperacion(self, date, typeOperacion=True, valorTicket = 0, cantidad = 1 ):
         operacion = DatoOperacion(date, typeOperacion, valorTicket, cantidad, interesPorcentual = self.__interesPorcentual )
         self.__datoOperacion.append(operacion)
+        
+        if( typeOperacion == True ):
+            tipo = "Compra"
+        else:
+            tipo = "Venta"
+        
+       # print("Tipo: " + tipo + "\tValor: " + str(round(valorTicket,2)) + "USD. \tFecha: " + str(date) )
+
 
     def getCntOperaciones(self):
         return(len(self.__datoOperacion))
@@ -105,6 +113,52 @@ class Operacion():
                 resultado += porcentajeOperacion
 
         return( round(resultado,2) )    
+
+    def getFallas(self):
+        #determina la cantidad de operaciones fallidas ($venta > $compra)
+        #Considerar comisiones
+        resultado = 0
+        valorCompra = 0
+        valorVenta = 0
+
+        print("Listado de Falla")
+        for operacion in self.__datoOperacion:
+            if(operacion.getTypeOperacion() == True):
+                #Egreso de dinero
+                valorCompra = operacion.getValorTicket()
+            else:
+                #Venta de activo
+                valorVenta = operacion.getValorTicket()
+                
+                if( valorCompra > valorVenta ):
+                    resultado += 1
+                    porcentual = ((valorCompra - valorVenta ) / valorCompra ) * 100
+                    print("Fecha: " + str(operacion.getDate()) + "\tCompra: " + str(round(valorCompra,2))+ "\tVenta: " +str(round(valorVenta,2)) + "\t Diferencia: " + str(round(porcentual,2)) + "%")
+
+        return( round(resultado,2) )
+
+    def getAciertos(self):
+        #determina la cantidad de operaciones fallidas ($venta > $compra)
+        #Considerar comisiones
+        resultado = 0
+        valorCompra = 0
+        valorVenta = 0
+
+        print("Listado de Aciertos")
+        for operacion in self.__datoOperacion:
+            if(operacion.getTypeOperacion() == True):
+                #Egreso de dinero
+                valorCompra = operacion.getValorTicket()
+            else:
+                #Venta de activo
+                valorVenta = operacion.getValorTicket()
+                
+                if( valorCompra < valorVenta ):
+                    resultado += 1
+                    porcentual = ((valorVenta - valorCompra ) / valorCompra ) * 100
+                    print("Fecha: " + str(operacion.getDate()) + "\tCompra: " + str(round(valorCompra,2))+ "\tVenta: " +str(round(valorVenta,2)) + "\t Diferencia: " + str(round(porcentual,2)) + "%")
+
+        return( round(resultado,2) )
 
 def cocodrillo(ticket, slow=21, fast=3):
     try:
