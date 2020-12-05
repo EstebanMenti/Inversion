@@ -2,16 +2,16 @@ import os
 import pandas as pd #pip install pandas
 
 #Determina la media movil de "n" ruedas
-def ma(ticket, n, add=True):
+def ma(df, n, add=True):
     try:
-        ma=pd.Series(pd.Series.rolling(ticket['Close'],n).mean(), name='MA_' + str(n))
+        ma=pd.Series(pd.Series.rolling(df['Close'],n).mean(), name='MA_' + str(n))
     except:
         print("Excepcion capturada en def ma(ticket, n, add=True) ")
     if(add == True):
-        ticket = ticket.join(ma)
+        df = df.join(ma)
     else:
-        ticket = ma
-    return ticket
+        df = ma
+    return df
 
 #Caclula la media movil ponderada de "n" ruedas. "add" lo agrega en los mismo datos
 def ema(ticket, n, add=True):

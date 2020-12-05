@@ -133,7 +133,7 @@ class Operacion():
                 if( valorCompra > valorVenta ):
                     resultado += 1
                     porcentual = ((valorCompra - valorVenta ) / valorCompra ) * 100
-                    print("Fecha: " + str(operacion.getDate()) + "\tCompra: " + str(round(valorCompra,2))+ "\tVenta: " +str(round(valorVenta,2)) + "\t Diferencia: " + str(round(porcentual,2)) + "%")
+                    print("\tFecha: " + str(operacion.getDate()) + "\tCompra: " + str(round(valorCompra,2))+ "\tVenta: " +str(round(valorVenta,2)) + "\t Diferencia: " + str(round(porcentual,2)) + "%")
 
         return( round(resultado,2) )
 
@@ -156,7 +156,7 @@ class Operacion():
                 if( valorCompra < valorVenta ):
                     resultado += 1
                     porcentual = ((valorVenta - valorCompra ) / valorCompra ) * 100
-                    print("Fecha: " + str(operacion.getDate()) + "\tCompra: " + str(round(valorCompra,2))+ "\tVenta: " +str(round(valorVenta,2)) + "\t Diferencia: " + str(round(porcentual,2)) + "%")
+                    print("\tFecha: " + str(operacion.getDate()) + "\tCompra: " + str(round(valorCompra,2))+ "\tVenta: " +str(round(valorVenta,2)) + "\t Diferencia: " + str(round(porcentual,2)) + "%")
 
         return( round(resultado,2) )
 

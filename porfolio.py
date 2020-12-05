@@ -1,6 +1,6 @@
 import os
-import pandas as pd #pip install pandas
-from pandas_datareader import data as pdr #pip install pandas-datareader
+import pandas as pd                         #pip install pandas
+from pandas_datareader import data as pdr   #pip install pandas-datareader
 import datetime as date
 import numpy as np
 import matplotlib.pyplot as plt  #pip install matplotlib
@@ -8,29 +8,50 @@ import matplotlib.pyplot as plt  #pip install matplotlib
 #from mplfinance import candlestick2_ochl       #pip install mpl_finance
 import mplfinance as mpf
 
+
+from download import *
 from indicadores import *
 from graficos import *
 from estrategias import *
-
+from correlacion import *
 #import pyfolio                  # pip install pyfolio
 
-def get_Data(index):
-    data = pdr.get_data_yahoo(index, start=startdate, end=enddate)
-    return(data)
+print("***********************************************************************")
+print("***********************************************************************")
+print("***********************************************************************")
+print("\n\nInicio del programa." + str(date.date.today())+"\n")
 
+tickers = ['AGRO.BA','ALUA.BA','AUSO.BA','BBAR.BA','BHIP.BA','BMA.BA','BOLT.BA','BPAT.BA','BRIO.BA',
+           'BYMA.BA','CADO.BA','CAPX.BA','CARC.BA','CECO2.BA','CELU.BA','CEPU.BA','CGPA2.BA','COME.BA',
+           'CRES.BA','CTIO.BA','CVH.BA','DGCU2.BA','EDN.BA','ESME.BA','FERR.BA','GAMI.BA','GARO.BA',
+           'GCLA.BA','GGAL.BA','GRIM.BA','HARG.BA','HAVA.BA','INAG.BA','INTR.BA','INVJ.BA','IRCP.BA',
+           'IRSA.BA','LOMA.BA','LEDE.BA','LONG.BA','METR.BA','MIRG.BA','MOLA.BA','MOLI.BA','MORI.BA',
+           'OEST.BA','PAMP.BA','PATA.BA','PGR.BA','RICH.BA','ROSE.BA','SAMI.BA','SEMI.BA','SUPV.BA',
+           'TECO2.BA','TGNO4.BA','TGSU2.BA','TRAN.BA','TXAR.BA','YPFD.BA']
 
-print("Inicio del programa")
-#simbolos = ['AAPL','MSFT','GLOB','KO','FB','INTC','GE','MELI','GOOG','IBM','XOM']
-simbolos = ['AAPL']
-startdate=date.datetime(2010,2,20)
-enddate=date.datetime(2020,9,10)
+tickersUSA = ['AAPL','GGAL.BA','GGAL','MSFT','GLOB','KO','FB','INTC','GE','MELI','GOOG','IBM','XOM'] 
+simbolos = tickersUSA 
 
+print("Download  data")
+años = 1
+startdate = date.date.today() - date.timedelta(365*años)
+enddate   = date.date.today()
+
+print("Periodo. Desde: " + str(startdate) + " Hasta: " + str(enddate) )
+diccinario = download(tickets = simbolos, años = años, enddate=enddate)
+
+print("\n\n***********************************************************************")
 print("Señal de cocodrillo")
-for indice in range(0, len(simbolos)):
-    ticket = get_Data( simbolos[indice] )
-    operacion = cocodrillo( ticket, slow=21, fast=3 )
+for i in diccinario:
+    print("------------------------------------------------------------------------")
+    operacion = cocodrillo(diccinario[i],slow=21, fast=3)
     operacion.getAciertos()
-    print("Ticket: " + simbolos[indice] + "\t Ganacia: " + str(operacion.getGananciaPorcentaje()) + "% Operaciones: " + str(operacion.getCntOperaciones())+ "\tFallas: " + str(operacion.getFallas()))
+    print("Ticket: " + i + "\t Ganacia: " + str(operacion.getGananciaPorcentaje()) + "% Operaciones: " + str(operacion.getCntOperaciones())+ "\tFallas: " + str(operacion.getFallas()))
+
+
+print("\n\n***********************************************************************")
+print("Correlacion entre activos:")
+print( correlacion( diccinario ) )
 
 
 #aapl.Close.plot()
