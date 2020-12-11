@@ -14,6 +14,7 @@ from indicadores import *
 from graficos import *
 from estrategias import *
 from correlacion import *
+from operacion import *
 #import pyfolio                  # pip install pyfolio
 
 print("***********************************************************************")
@@ -30,16 +31,40 @@ tickers = ['AGRO.BA','ALUA.BA','AUSO.BA','BBAR.BA','BHIP.BA','BMA.BA','BOLT.BA',
            'TECO2.BA','TGNO4.BA','TGSU2.BA','TRAN.BA','TXAR.BA','YPFD.BA']
 
 tickersUSA = ['AAPL','GGAL.BA','GGAL','MSFT','GLOB','KO','FB','INTC','GE','MELI','GOOG','IBM','XOM'] 
-simbolos = tickersUSA 
+simbolos = tickers 
 
-print("Download  data")
+print("\n\n***********************************************************************")
+print("DOWNLOAD DATA")
 años = 1
 startdate = date.date.today() - date.timedelta(365*años)
 enddate   = date.date.today()
-
 print("Periodo. Desde: " + str(startdate) + " Hasta: " + str(enddate) )
 diccinario = download(tickets = simbolos, años = años, enddate=enddate)
+print("***********************************************************************")
 
+
+print("\n\n***********************************************************************")
+print('ESTRATEGIAS')
+ticket = diccinario.keys()
+#operacion = op(ticket = 'AAPL', valorTicket = 10, datetime = 50)
+#operacion = operatiOnOnActve('aapl')
+#operacion.loadOperacion(10, cantidad= 20)
+#operacion.loadOperacion(10, cantidad=10, typeOperacion='venta')
+#operacion.loadOperacion(2, cantidad=5)
+#print( "Cantidad papeles: " + str(operacion.getCantidadActivo()) )
+#print("Costos: " + str(operacion.getCostoOperacionNeto()))
+
+mc = 0
+mbah = 0
+for i in diccinario:
+    p = Cocodrilo( 'aapl',diccinario[ i ] )
+    mc += p.getGananciaPorcentual()
+    bah = BuyAndHold('aapl',diccinario[ i ])
+    mbah += bah.getGananciaPorcentual()
+    print(i + "\tCocodrilo: " + str(p.getGananciaPorcentual()) + "%" + "\tComprar y Retener: " + str(bah.getGananciaPorcentual()) +"%" )
+print("Suma. Cocodrilo: " + str(round(mc,2))+ "%" + "\tComprar y Retener: " + str(round(mbah,2)) +"%" )
+print("***********************************************************************")
+"""
 print("\n\n***********************************************************************")
 print("Señal de cocodrillo")
 for i in diccinario:
@@ -47,12 +72,12 @@ for i in diccinario:
     operacion = cocodrillo(diccinario[i],slow=21, fast=3)
     operacion.getAciertos()
     print("Ticket: " + i + "\t Ganacia: " + str(operacion.getGananciaPorcentaje()) + "% Operaciones: " + str(operacion.getCntOperaciones())+ "\tFallas: " + str(operacion.getFallas()))
-
+"""
 
 print("\n\n***********************************************************************")
-print("Correlacion entre activos:")
+print("CORRELACION ENTRE ACTIVOS")
 print( correlacion( diccinario ) )
-
+print("***********************************************************************")
 
 #aapl.Close.plot()
 

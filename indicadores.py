@@ -4,7 +4,8 @@ import pandas as pd #pip install pandas
 #Determina la media movil de "n" ruedas
 def ma(df, n, add=True):
     try:
-        ma=pd.Series(pd.Series.rolling(df['Close'],n).mean(), name='MA_' + str(n))
+        ma = pd.Series( pd.Series.rolling(df, n ).mean(), name='MA_' + str(n) )
+        
     except:
         print("Excepcion capturada en def ma(ticket, n, add=True) ")
     if(add == True):
@@ -14,16 +15,17 @@ def ma(df, n, add=True):
     return df
 
 #Caclula la media movil ponderada de "n" ruedas. "add" lo agrega en los mismo datos
-def ema(ticket, n, add=True):
+def ema(df, n, add=True):
     try:
-        ema = pd.Series(pd.Series.ewm(ticket['Close'], span = n, min_periods = n -1, adjust = False).mean(), name='EMA_' + str(n))
+        ema = pd.Series(pd.Series.ewm(df, span = n, min_periods = n -1, adjust = False).mean(), name='EMA_' + str(n))
+        #ema = pd.Series(pd.Series.ewm(ticket['Close'], span = n, min_periods = n -1, adjust = False).mean(), name='EMA_' + str(n))
     except:
        print("Excepcion capturada en def ema(ticket, n, add=True)") 
     if(add == True):
-        ticket = ticket.join(ema)
+        df = df.join(ema)
     else:
-        ticket = ema
-    return ticket
+        df = ema
+    return df
 
 #indice de fuerza relativa
 def rsi(ticket, n, add=True):
