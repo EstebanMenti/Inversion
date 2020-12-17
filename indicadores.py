@@ -4,14 +4,14 @@ import pandas as pd #pip install pandas
 #Determina la media movil de "n" ruedas
 def ma(df, n, add=True):
     try:
-        ma = pd.Series( pd.Series.rolling(df, n ).mean(), name='MA_' + str(n) )
-        
+        #ma = pd.Series( pd.Series.rolling(df, n ).mean(), name='MA_' + str(n) )
+        ma = df.rolling(window=n).mean()
     except:
         print("Excepcion capturada en def ma(ticket, n, add=True) ")
     if(add == True):
         df = df.join(ma)
     else:
-        df = ma
+        df =  ma
     return df
 
 #Caclula la media movil ponderada de "n" ruedas. "add" lo agrega en los mismo datos
@@ -58,9 +58,17 @@ def rsi(ticket, n, add=True):
     negdi = pd.Series(pd.Series.ewm(doi, span=n, min_periods= n -1).mean())
     rsi = pd.Series(posdi /(posdi + negdi), name= 'RSI_' + str(n))
     
+    ticket = ticket.join(rsi)
+    ticket.set_index('Date', inplace=True)
+    
+    if(add == True):
+        return ticket
+    return ticket['RSI_' + str(n)]
+    """
     if(add == True):
         ticket = ticket.join(rsi)
         ticket.set_index('Date', inplace=True)
     else:
         ticket = rsi
     return(ticket)
+    """

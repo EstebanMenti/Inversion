@@ -20,18 +20,20 @@ from operacion import *
 print("***********************************************************************")
 print("***********************************************************************")
 print("***********************************************************************")
-print("\n\nInicio del programa." + str(date.date.today())+"\n")
+formato = "%d-%m-%Y %H:%M:%S"
 
-tickers = ['AGRO.BA','ALUA.BA','AUSO.BA','BBAR.BA','BHIP.BA','BMA.BA','BOLT.BA','BPAT.BA','BRIO.BA',
-           'BYMA.BA','CADO.BA','CAPX.BA','CARC.BA','CECO2.BA','CELU.BA','CEPU.BA','CGPA2.BA','COME.BA',
+print("\n\nInicio del programa: ", date.date.today().strftime(formato)+"\n")
+
+tickers = ['AGRO.BA','ALUA.BA','AUSO.BA','BHIP.BA','BMA.BA','BOLT.BA','BPAT.BA','BRIO.BA',
+           'BYMA.BA','CADO.BA','CAPX.BA','CECO2.BA','CELU.BA','CEPU.BA','CGPA2.BA','COME.BA',
            'CRES.BA','CTIO.BA','CVH.BA','DGCU2.BA','EDN.BA','ESME.BA','FERR.BA','GAMI.BA','GARO.BA',
            'GCLA.BA','GGAL.BA','GRIM.BA','HARG.BA','HAVA.BA','INAG.BA','INTR.BA','INVJ.BA','IRCP.BA',
            'IRSA.BA','LOMA.BA','LEDE.BA','LONG.BA','METR.BA','MIRG.BA','MOLA.BA','MOLI.BA','MORI.BA',
-           'OEST.BA','PAMP.BA','PATA.BA','PGR.BA','RICH.BA','ROSE.BA','SAMI.BA','SEMI.BA','SUPV.BA',
+           'OEST.BA','PAMP.BA','PATA.BA','PGR.BA','ROSE.BA','SAMI.BA','SEMI.BA','SUPV.BA',
            'TECO2.BA','TGNO4.BA','TGSU2.BA','TRAN.BA','TXAR.BA','YPFD.BA']
 
-tickersUSA = ['AAPL','GGAL.BA','GGAL','MSFT','GLOB','KO','FB','INTC','GE','MELI','GOOG','IBM','XOM'] 
-simbolos = tickers 
+tickersUSA = ['AAPL']#,'GGAL.BA','GGAL','MSFT','GLOB','KO','FB','INTC','GE','MELI','GOOG','IBM','XOM'] 
+simbolos = tickersUSA 
 
 print("\n\n***********************************************************************")
 print("DOWNLOAD DATA")
@@ -56,13 +58,55 @@ ticket = diccinario.keys()
 
 mc = 0
 mbah = 0
+mrsi = 0
+mrsima = 0
 for i in diccinario:
-    p = Cocodrilo( 'aapl',diccinario[ i ] )
+
+   # a = diccinario[ i ]['Close']
+   # pepe = pd.DataFrame (a)
+   # irsi = rsi(diccinario[ i ], 20, add=True)
+   # b = irsi['RSI_20']
+   # print( b )
+   # print(type(pepe))
+
+    a = pd.DataFrame( diccinario[ i ]['Close'] )
+    p = Cocodrilo( i, a )
+    bah = BuyAndHold(i, diccinario[ i ])
+    ersi = rsi_sobrecompra_sobreventa( i, diccinario[ i ] )
+    rsima = rsi_media_ponderada(i, diccinario[ i ])
+
+    e_r_m = estrategia_rsi_media(i, diccinario[ i ])
+    
+
+    #Obtiene los días que se esta invertido
+    day_cocodrilo = p.get_day_in()
+    day_bah = bah.get_day_in()
+    day_ersi = ersi.get_day_in()
+    day_rsima = rsima.get_day_in()
+
     mc += p.getGananciaPorcentual()
-    bah = BuyAndHold('aapl',diccinario[ i ])
     mbah += bah.getGananciaPorcentual()
-    print(i + "\tCocodrilo: " + str(p.getGananciaPorcentual()) + "%" + "\tComprar y Retener: " + str(bah.getGananciaPorcentual()) +"%" )
-print("Suma. Cocodrilo: " + str(round(mc,2))+ "%" + "\tComprar y Retener: " + str(round(mbah,2)) +"%" )
+    mrsi += ersi.getGananciaPorcentual()
+    mrsima += rsima.getGananciaPorcentual()
+
+    
+
+    print(i + "\tCocodrilo: " + str(p.getGananciaPorcentual()) + "% (" + str(day_cocodrilo) + ")" +
+    "\t\tComprar y Retener: " + str(bah.getGananciaPorcentual()) + "% (" + str(day_bah) + ")" +
+    "\t\tRSI: " + str(ersi.getGananciaPorcentual()) + "% (" + str(day_ersi) + ")" +
+    "\t\tRSI Cocodrilo: " + str(rsima.getGananciaPorcentual()) + "% (" + str(day_rsima) + ")" +
+    "\t\tRSI Cocodrilo: " + str(e_r_m.get_ganancia_neta()) + "% (" + str(e_r_m.get_day_in()) + ")")
+print("--------------------------------------------------------------------------------------------")
+
+mc = mc / len(diccinario)
+mbah /= len(diccinario)
+mrsi /= len(diccinario)
+mrsima /= len(diccinario)
+print( "MEDIA")
+print("\tCocodrilo: " + str(round(mc,2))+ "%" + 
+"\tComprar y Retener: " + str(round(mbah,2)) +"%" +  
+"\tRSI: " + str(round(mrsi,2)) + "%"
+"\tRSI Cocodrilo: " + str(round(mrsima,2)) +"%")
 print("***********************************************************************")
 """
 print("\n\n***********************************************************************")

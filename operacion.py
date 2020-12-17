@@ -50,7 +50,7 @@ class operatiOnOnActve():
     def getTicket(self):
         return self.__ticket    
     def getCantidadActivo(self):
-        print("obtiene la cantidad de papeles que se tiene (Ej: se compran 4, se venten 1, resultado: 3")
+        #print("obtiene la cantidad de papeles que se tiene (Ej: se compran 4, se venten 1, resultado: 3")
         cnt = 0
         for i in self.__datoOperacion:
             if(i.getTypeOperacion() == 'compra'):
@@ -83,5 +83,62 @@ class operatiOnOnActve():
         return resultado
     def getListOperacion(self):
         #retorna el listado de operaciones realizadas
-        return self.__datoOperacion
-    
+        return self.__datoOperacion    
+ 
+    def print_ticket(self):
+        return self.__ticket 
+    def get_ganancia_bruto(self):
+    #retorna el valor de las operaciones sin las comisiones
+        resultado = 0                   #Dinero puesto
+
+        for i in self.__datoOperacion:
+            if( i.getTypeOperacion == 'compra' ): 
+                resultado -= i.getCostoOperacionBruto()             #dinero gastado 
+            else:
+                resultado += i.getCostoOperacionBruto()             #dinero obtenido
+
+        return resultado    
+    def get_ganancia_neta(self):
+        #retorna el valor de las operaciones con las comisiones incluidas
+        resultado = 0
+        for i in self.__datoOperacion:
+            if( i.getTypeOperacion() == 'compra' ): 
+                resultado -= i.getCostoOperacionNeto()       #dinero gastado
+            else:
+                resultado += i.getCostoOperacionNeto()       #dinero obtenido
+        return resultado    
+    def get_cantidad_activos(self):
+        #print("obtiene la cantidad de papeles que se tiene (Ej: se compran 4, se venten 1, resultado: 3")
+        cnt = 0
+        for i in self.__datoOperacion:
+            if(i.getTypeOperacion() == 'compra'):
+                cnt = cnt + i.getCantidad()
+            else:
+                cnt = cnt - i.getCantidad()
+        return cnt    
+    def load_operacion(self, valorTicketq, datetime=date.date.today(), cantidad=1, typeOperacion='compra' ):
+        #p = operacion(self.__ticket, valorTicketq, datetime, cantidad, typeOperacion, tipo = self.__tipo )
+        #self.__datoOperacion.append(p) 
+        pass 
+
+
+    def get_day_in(self):
+        #Obtiene la cantidad de dias que se esta invertido
+        resultados = date.timedelta(0)
+        day_compra = None
+        day_venta = None
+
+        for i in self.__datoOperacion:
+            if( i.getTypeOperacion() == 'compra' ): 
+                day_compra = i.getDateTime()             #Fecha de la compra 
+            else:
+                day_venta = i.getDateTime()              #Fecha de venta
+            
+            if(day_compra != None and day_venta != None):
+                diferencia = day_venta - day_compra
+                day_venta = None
+                day_venta = None
+                resultados = diferencia + resultados
+        
+        return( resultados.days )
+
