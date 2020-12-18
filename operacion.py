@@ -2,6 +2,13 @@ import math
 import datetime as date
 #from indicadores import *
 from comision import *
+from enum import Enum
+
+
+class tipo_operacion(Enum):
+    compra = 1
+    venta = 2
+
 
 
 class operacion():
@@ -84,8 +91,14 @@ class operatiOnOnActve():
     def getListOperacion(self):
         #retorna el listado de operaciones realizadas
         return self.__datoOperacion    
- 
-    def print_ticket(self):
+    
+    def get_lista_operacion(self):
+        #retorna el listado de operaciones realizadas
+        return self.__datoOperacion
+    @property
+    def string(self):
+        pass
+    def get_ticket(self):
         return self.__ticket 
     def get_ganancia_bruto(self):
     #retorna el valor de las operaciones sin las comisiones
@@ -120,8 +133,6 @@ class operatiOnOnActve():
         #p = operacion(self.__ticket, valorTicketq, datetime, cantidad, typeOperacion, tipo = self.__tipo )
         #self.__datoOperacion.append(p) 
         pass 
-
-
     def get_day_in(self):
         #Obtiene la cantidad de dias que se esta invertido
         resultados = date.timedelta(0)
@@ -130,9 +141,9 @@ class operatiOnOnActve():
 
         for i in self.__datoOperacion:
             if( i.getTypeOperacion() == 'compra' ): 
-                day_compra = i.getDateTime()             #Fecha de la compra 
+                day_compra = i.getDateTime()                    #Fecha de la compra 
             else:
-                day_venta = i.getDateTime()              #Fecha de venta
+                day_venta = i.getDateTime()                     #Fecha de venta
             
             if(day_compra != None and day_venta != None):
                 diferencia = day_venta - day_compra

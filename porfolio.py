@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt  #pip install matplotlib
 #--- Para graficos de velas
 #from mplfinance import candlestick2_ochl       #pip install mpl_finance
-import mplfinance as mpf
+#import mplfinance as mpf
 
 
 from download import *
@@ -15,7 +15,6 @@ from graficos import *
 from estrategias import *
 from correlacion import *
 from operacion import *
-#import pyfolio                  # pip install pyfolio
 
 print("***********************************************************************")
 print("***********************************************************************")
@@ -48,26 +47,13 @@ print("***********************************************************************")
 print("\n\n***********************************************************************")
 print('ESTRATEGIAS')
 ticket = diccinario.keys()
-#operacion = op(ticket = 'AAPL', valorTicket = 10, datetime = 50)
-#operacion = operatiOnOnActve('aapl')
-#operacion.loadOperacion(10, cantidad= 20)
-#operacion.loadOperacion(10, cantidad=10, typeOperacion='venta')
-#operacion.loadOperacion(2, cantidad=5)
-#print( "Cantidad papeles: " + str(operacion.getCantidadActivo()) )
-#print("Costos: " + str(operacion.getCostoOperacionNeto()))
 
 mc = 0
 mbah = 0
 mrsi = 0
 mrsima = 0
-for i in diccinario:
 
-   # a = diccinario[ i ]['Close']
-   # pepe = pd.DataFrame (a)
-   # irsi = rsi(diccinario[ i ], 20, add=True)
-   # b = irsi['RSI_20']
-   # print( b )
-   # print(type(pepe))
+for i in diccinario:
 
     a = pd.DataFrame( diccinario[ i ]['Close'] )
     p = Cocodrilo( i, a )
@@ -91,11 +77,11 @@ for i in diccinario:
 
     
 
-    print(i + "\tCocodrilo: " + str(p.getGananciaPorcentual()) + "% (" + str(day_cocodrilo) + ")" +
-    "\t\tComprar y Retener: " + str(bah.getGananciaPorcentual()) + "% (" + str(day_bah) + ")" +
-    "\t\tRSI: " + str(ersi.getGananciaPorcentual()) + "% (" + str(day_ersi) + ")" +
-    "\t\tRSI Cocodrilo: " + str(rsima.getGananciaPorcentual()) + "% (" + str(day_rsima) + ")" +
-    "\t\tRSI Cocodrilo: " + str(e_r_m.get_ganancia_neta()) + "% (" + str(e_r_m.get_day_in()) + ")")
+    print(i + "\tCocodrilo: " + str(round(p.getGananciaPorcentual(),1)) + "% (" + str(day_cocodrilo) + ")" +
+    "\tComprar y Retener: " + str(round(bah.getGananciaPorcentual(),1)) + "% (" + str(day_bah) + ")" +
+    "\tRSI: " + str(round(ersi.getGananciaPorcentual(),1)) + "% (" + str(day_ersi) + ")" +
+    "\tRSI Cocodrilo: " + str(round(rsima.getGananciaPorcentual(),1)) + "% (" + str(day_rsima) + ")" +
+    "\tRSI Cocodrilo: " + str(round(e_r_m.get_ganancia_neta(),1)) + "% (" + str(e_r_m.get_day_in()) + ")")
 print("--------------------------------------------------------------------------------------------")
 
 mc = mc / len(diccinario)
@@ -108,15 +94,6 @@ print("\tCocodrilo: " + str(round(mc,2))+ "%" +
 "\tRSI: " + str(round(mrsi,2)) + "%"
 "\tRSI Cocodrilo: " + str(round(mrsima,2)) +"%")
 print("***********************************************************************")
-"""
-print("\n\n***********************************************************************")
-print("Señal de cocodrillo")
-for i in diccinario:
-    print("------------------------------------------------------------------------")
-    operacion = cocodrillo(diccinario[i],slow=21, fast=3)
-    operacion.getAciertos()
-    print("Ticket: " + i + "\t Ganacia: " + str(operacion.getGananciaPorcentaje()) + "% Operaciones: " + str(operacion.getCntOperaciones())+ "\tFallas: " + str(operacion.getFallas()))
-"""
 
 print("\n\n***********************************************************************")
 print("CORRELACION ENTRE ACTIVOS")

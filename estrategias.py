@@ -5,189 +5,6 @@ from indicadores import *
 from operacion import *
 import pandas as pd  
 
-
-"""
-class DatoOperacion():
-    def __init__(self, date, typeOperacion=True, valorTicket = 0, cantidad = 1, interesPorcentual = 1):
-        self.__date=date
-        self.__cantidad = cantidad
-        #Tipo de operacion = True (es compra). False = venta
-        self.__typeOperacion=typeOperacion
-        self.__valorTicket=valorTicket
-        self.__interesPorcentual=interesPorcentual
-
-    def getDate(self):
-        return self.__date
-    def getTypeOperacion(self):
-        return self.__typeOperacion
-    def getValorTicket(self):
-        return self.__valorTicket
-    def getIntresPorcentual(self):
-        return self.__interesPorcentual
-    def getCantidad(self):
-        return self.__cantidad
-
-    def getCostoOperacionNeto(self):
-        if(self.__typeOperacion == True):
-            #Operacion de compra del instrumento
-            return self.__valorTicket * self.__cantidad * (1+ self.__interesPorcentual )
-        
-        #Operacion de venta
-        return self.__valorTicket * self.__cantidad * (1 - self.__interesPorcentual )
-    
-    def getCostoOperacionBruto(self):
-        if(self.__typeOperacion == True):
-            #Operacion de compra del instrumento
-            return self.__valorTicket * self.__cantidad
-        
-        #Operacion de venta
-        return self.__valorTicket * self.__cantidad
-
-class Operacion():
-    def __init__(self, interesPorcentual=1):
-        self.__datoOperacion = []
-        self.__interesPorcentual = interesPorcentual
-    
-    def loadOperacion(self, date, typeOperacion=True, valorTicket = 0, cantidad = 1 ):
-        operacion = DatoOperacion(date, typeOperacion, valorTicket, cantidad, interesPorcentual = self.__interesPorcentual )
-        self.__datoOperacion.append(operacion)
-        
-        if( typeOperacion == True ):
-            tipo = "Compra"
-        else:
-            tipo = "Venta"
-        
-       # print("Tipo: " + tipo + "\tValor: " + str(round(valorTicket,2)) + "USD. \tFecha: " + str(date) )
-
-
-    def getCntOperaciones(self):
-        return(len(self.__datoOperacion))
-    
-    def getGananciaBruto(self):
-        #sin considerar comisiones
-        resultado = 0
-        cantDisponible = 0
-
-        for operacion in self.__datoOperacion:
-            if(operacion.getTypeOperacion() == True):
-                #Compra de instrumento
-                cantDisponible += operacion.getCantidad()
-                #Egreso de dinero
-                resultado += (operacion.getCostoOperacionBruto() * (-1))
-            else:
-                #venta de instrumento
-                cantDisponible -= operacion.getCantidad()
-                #Ingreso de dinero
-                resultado += operacion.getCostoOperacionBruto()
-        
-        return( round(resultado,2) )
-    
-    def getGananciaNeto(self):
-        #Considerar comisiones
-        resultado = 0
-
-        for operacion in self.__datoOperacion:
-            if(operacion.getTypeOperacion() == True):
-                #Egreso de dinero
-                resultado += (operacion.getCostoOperacionNeto() * (-1))
-            else:
-                #Ingreso de dinero
-                resultado += operacion.getCostoOperacionNeto()    
-
-        return( round(resultado,2) )
-
-    def getGananciaPorcentaje(self):
-         #Considerar comisiones
-        resultado = 0
-        valorCompra = 0
-        valorVenta = 0
-        for operacion in self.__datoOperacion:
-
-            if(operacion.getTypeOperacion() == True):
-                #Egreso de dinero
-                valorCompra = operacion.getCostoOperacionNeto()
-            else:
-                #Ingreso de dinero
-                valorVenta = operacion.getCostoOperacionNeto()
-                if( valorCompra != 0):
-                    porcentajeOperacion = (valorVenta - valorCompra) * 100 / valorCompra
-                else:
-                    print("Se intenta dividir por cero")
-                resultado += porcentajeOperacion
-
-        return( round(resultado,2) )    
-
-    def getFallas(self):
-        #determina la cantidad de operaciones fallidas ($venta > $compra)
-        #Considerar comisiones
-        resultado = 0
-        valorCompra = 0
-        valorVenta = 0
-
-        print("Listado de Falla")
-        for operacion in self.__datoOperacion:
-            if(operacion.getTypeOperacion() == True):
-                #Egreso de dinero
-                valorCompra = operacion.getValorTicket()
-            else:
-                #Venta de activo
-                valorVenta = operacion.getValorTicket()
-                
-                if( valorCompra > valorVenta ):
-                    resultado += 1
-                    porcentual = ((valorCompra - valorVenta ) / valorCompra ) * 100
-                    print("\tFecha: " + str(operacion.getDate()) + "\tCompra: " + str(round(valorCompra,2))+ "\tVenta: " +str(round(valorVenta,2)) + "\t Diferencia: " + str(round(porcentual,2)) + "%")
-
-        return( round(resultado,2) )
-
-    def getAciertos(self):
-        #determina la cantidad de operaciones fallidas ($venta > $compra)
-        #Considerar comisiones
-        resultado = 0
-        valorCompra = 0
-        valorVenta = 0
-
-        print("Listado de Aciertos")
-        for operacion in self.__datoOperacion:
-            if(operacion.getTypeOperacion() == True):
-                #Egreso de dinero
-                valorCompra = operacion.getValorTicket()
-            else:
-                #Venta de activo
-                valorVenta = operacion.getValorTicket()
-                
-                if( valorCompra < valorVenta ):
-                    resultado += 1
-                    porcentual = ((valorVenta - valorCompra ) / valorCompra ) * 100
-                    print("\tFecha: " + str(operacion.getDate()) + "\tCompra: " + str(round(valorCompra,2))+ "\tVenta: " +str(round(valorVenta,2)) + "\t Diferencia: " + str(round(porcentual,2)) + "%")
-
-        return( round(resultado,2) )
-
-def cocodrillo(ticket, slow=21, fast=3):
-    try:
-        operacion = Operacion(interesPorcentual = comisionCedear() )
-
-        ms = ma(ticket, slow, add=False) 
-        mf = ma(ticket, fast, add=False)
-       
-        cruceUp=False
-        
-        for indice in range(slow, len(mf)):
-
-            if( mf[indice] > ms[indice] ):
-                if( cruceUp == False):
-                    cruceUp = True                
-                    operacion.loadOperacion(date = mf.index[indice].to_pydatetime(), typeOperacion= True, valorTicket = mf.values[indice] )
-
-            if( mf[indice] < ms[indice] ):
-                if( cruceUp == True ):
-                    cruceUp = False
-                    operacion.loadOperacion(date = mf.index[indice].to_pydatetime(), typeOperacion= False, valorTicket = mf.values[indice] )
-    except:
-        print("Salta una excepcion")
-    
-    return( operacion )
-"""
 class Cocodrilo():
     def __init__(self, ticket, df, slow=21, fast=3, tipo='accionbyma'):
         self.__ticket = ticket 
@@ -324,6 +141,7 @@ class BuyAndHold():
         valorIngreso =  self.__df[ 0 ]
         resultado = (self.getGanaciasNeta() / valorIngreso ) * 100
         return (round(resultado,2)) 
+
     def get_day_in(self):
         return( self.__operaciones.get_day_in() )
         
@@ -356,7 +174,6 @@ class rsi_sobrecompra_sobreventa():
         if(self.__operaciones.getCantidadActivo() != 0 ):
             self.__operaciones.loadOperacion(self.__df['Close'].values[ p ], self.__df.index[ -1 ].to_pydatetime(),1, 'venta')
         
-
     def getGanaciasNeta(self):
         #Incluye las comisiones
         return (round(self.__operaciones.getGananciaNeta(),2))
@@ -366,6 +183,7 @@ class rsi_sobrecompra_sobreventa():
         valorIngreso =  self.__df['Close'].values[ 0 ]
         resultado = (self.getGanaciasNeta() / valorIngreso ) * 100
         return (round(resultado,2)) 
+
     def get_day_in(self):
         return( self.__operaciones.get_day_in() )    
 
@@ -417,18 +235,18 @@ class rsi_media_ponderada():
         valorIngreso =  self.__df.values[0,0]
         resultado = (self.getGanaciasNeta() / valorIngreso ) * 100
         return (round(resultado,2)) 
+
     def get_day_in(self):
         return( self.__operaciones.get_day_in() )
 
 
 class estrategia_rsi_media(operatiOnOnActve):
-    #Utiliza una señal cocodrillo sobre un rsi
     def __init__(self, ticket, df, rsi = 20, tipo='accionbyma'):
         
         self.__df = df
         self.__rsi = rsi
         self.__tipo = tipo
-        self.operatiOnOnActve.__init__(self, ticket = ticket, tipo = self.__tipo)
+        super().__init__(ticket = ticket, tipo = self.__tipo)
         self.ejecutar()
 
     def ejecutar(self):
@@ -448,14 +266,14 @@ class estrategia_rsi_media(operatiOnOnActve):
                 if( _rsi.values[i] < 0.8 ):   
                     if( cruceUp == False):
                         cruceUp = True
-                        self.operatiOnOnActve.loadOperacion(self.__df.values[i,0], self.__df.index[i].to_pydatetime(),1, 'compra') 
+                        super().loadOperacion(self.__df.values[i,0], self.__df.index[i].to_pydatetime(),1, 'compra') 
                                             
             if( mf.values[indice] < ms.values[indice] ):
                 if( _rsi.values[i] > 0.2 ):  
                     if( cruceUp == True ):
                         cruceUp = False
-                        self.operatiOnOnActve.loadOperacion(self.__df.values[i,0], self.__df.index[i].to_pydatetime(),1, 'venta')
+                        super().loadOperacion(self.__df.values[i,0], self.__df.index[i].to_pydatetime(),1, 'venta')
                 
-      #  if(self.operatiOnOnActve.get_cantidad_activos() != 0 ):
-      #      operatiOnOnActve.load_operacion(self.__df.values[-1,0], self.__df.index[-1].to_pydatetime(), 1, 'venta')  
+        if(super().get_cantidad_activos() != 0 ):
+            super().loadOperacion(self.__df.values[i,0], self.__df.index[i].to_pydatetime(),1, 'venta')
     
