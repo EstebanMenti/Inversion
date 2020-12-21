@@ -5,11 +5,13 @@ from comision import *
 from enum import Enum
 
 
-class tipo_operacion(Enum):
+class Tipo_operacion(Enum):
     compra = 1
     venta = 2
 
-
+class Tipo_accion(Enum):
+    accionbyma = 1
+    cedear = 2
 
 class operacion():
     def __init__(self, ticket, valorTicket, datetime,   cantidad = 1, typeOperacion = 'compra', tipo = 'accionbyma' ):
@@ -51,46 +53,9 @@ class operatiOnOnActve():
          self.__ticket = ticket
          self.__tipo = tipo.lower() 
          self.__datoOperacion = []
-    def loadOperacion(self, valorTicketq, datetime=date.date.today(), cantidad=1, typeOperacion='compra' ):
-        p = operacion(self.__ticket, valorTicketq, datetime, cantidad, typeOperacion, tipo = self.__tipo )
-        self.__datoOperacion.append(p)
-    def getTicket(self):
-        return self.__ticket    
-    def getCantidadActivo(self):
-        #print("obtiene la cantidad de papeles que se tiene (Ej: se compran 4, se venten 1, resultado: 3")
-        cnt = 0
-        for i in self.__datoOperacion:
-            if(i.getTypeOperacion() == 'compra'):
-                cnt = cnt + i.getCantidad()
-            else:
-                cnt = cnt - i.getCantidad()
-        return cnt
-    def getCantidadOperacion(self):
+ 
+    def get_cantidad_operacion(self):
         return len(self.__datoOperacion)
-    def getGananciaBruto(self):
-        #retorna el valor de las operaciones sin las comisiones
-        resultado = 0                   #Dinero puesto
-
-        for i in self.__datoOperacion:
-            if( i.getTypeOperacion == 'compra' ): 
-                resultado = resultado - i.getCostoOperacionBruto() #dinero gastado 
-            else:
-                resultado = resultado + i.getCostoOperacionBruto() #dinero obtenido
-
-        return resultado
-    def getGananciaNeta(self):
-        #retorna el valor de las operaciones con las comisiones incluidas
-        resultado = 0
-
-        for i in self.__datoOperacion:
-            if( i.getTypeOperacion() == 'compra' ): 
-                resultado -= (i.getCostoOperacionNeto() * +1)           #dinero gastado
-            else:
-                resultado = resultado + i.getCostoOperacionNeto()       #dinero obtenido
-        return resultado
-    def getListOperacion(self):
-        #retorna el listado de operaciones realizadas
-        return self.__datoOperacion    
     
     def get_lista_operacion(self):
         #retorna el listado de operaciones realizadas
@@ -98,10 +63,12 @@ class operatiOnOnActve():
     @property
     def string(self):
         pass
+
     def get_ticket(self):
         return self.__ticket 
+
     def get_ganancia_bruto(self):
-    #retorna el valor de las operaciones sin las comisiones
+        #retorna el valor de las operaciones sin las comisiones
         resultado = 0                   #Dinero puesto
 
         for i in self.__datoOperacion:
@@ -111,6 +78,7 @@ class operatiOnOnActve():
                 resultado += i.getCostoOperacionBruto()             #dinero obtenido
 
         return resultado    
+
     def get_ganancia_neta(self):
         #retorna el valor de las operaciones con las comisiones incluidas
         resultado = 0
@@ -120,6 +88,24 @@ class operatiOnOnActve():
             else:
                 resultado += i.getCostoOperacionNeto()       #dinero obtenido
         return resultado    
+
+    def get_ganancia_porcentual(self):
+        #retorna el valor de las operaciones con las comisiones incluidas
+        resultado = 0
+        valor_compra = 0
+        valor_venta = 0
+        porcentaje = 0
+
+        for i in self.__datoOperacion:
+            if( i.getTypeOperacion() == 'compra' ): 
+                valor_compra = i.getCostoOperacionNeto()
+            else:
+                valor_venta = i.getCostoOperacionNeto()
+                porcentaje = (valor_venta - valor_compra) / valor_compra
+                resultado += porcentaje
+        
+        return round(resultado*100,2)   
+
     def get_cantidad_activos(self):
         #print("obtiene la cantidad de papeles que se tiene (Ej: se compran 4, se venten 1, resultado: 3")
         cnt = 0
@@ -129,10 +115,11 @@ class operatiOnOnActve():
             else:
                 cnt = cnt - i.getCantidad()
         return cnt    
+
     def load_operacion(self, valorTicketq, datetime=date.date.today(), cantidad=1, typeOperacion='compra' ):
-        #p = operacion(self.__ticket, valorTicketq, datetime, cantidad, typeOperacion, tipo = self.__tipo )
-        #self.__datoOperacion.append(p) 
-        pass 
+        p = operacion(self.__ticket, valorTicketq, datetime, cantidad, typeOperacion, tipo = self.__tipo )
+        self.__datoOperacion.append(p) 
+        
     def get_day_in(self):
         #Obtiene la cantidad de dias que se esta invertido
         resultados = date.timedelta(0)

@@ -15,6 +15,7 @@ from graficos import *
 from estrategias import *
 from correlacion import *
 from operacion import *
+from analisis import *
 
 print("***********************************************************************")
 print("***********************************************************************")
@@ -41,8 +42,6 @@ startdate = date.date.today() - date.timedelta(365*años)
 enddate   = date.date.today()
 print("Periodo. Desde: " + str(startdate) + " Hasta: " + str(enddate) )
 diccinario = download(tickets = simbolos, años = años, enddate=enddate)
-print("***********************************************************************")
-
 
 print("\n\n***********************************************************************")
 print('ESTRATEGIAS')
@@ -56,32 +55,21 @@ mrsima = 0
 for i in diccinario:
 
     a = pd.DataFrame( diccinario[ i ]['Close'] )
-    p = Cocodrilo( i, a )
-    bah = BuyAndHold(i, diccinario[ i ])
-    ersi = rsi_sobrecompra_sobreventa( i, diccinario[ i ] )
-    rsima = rsi_media_ponderada(i, diccinario[ i ])
-
+    e_c = cocodrilo( i, a )
+    e_bah = buy_and_hold(i, diccinario[ i ])
+    e_rsi = rsi_sobrecompra_sobreventa( i, diccinario[ i ] )
     e_r_m = estrategia_rsi_media(i, diccinario[ i ])
-    
+        
 
-    #Obtiene los días que se esta invertido
-    day_cocodrilo = p.get_day_in()
-    day_bah = bah.get_day_in()
-    day_ersi = ersi.get_day_in()
-    day_rsima = rsima.get_day_in()
+    mc += e_c.get_ganancia_porcentual()
+    mbah += e_bah.get_ganancia_porcentual()
+    mrsi += e_rsi.get_ganancia_porcentual()
+    mrsima += e_r_m.get_ganancia_porcentual()
 
-    mc += p.getGananciaPorcentual()
-    mbah += bah.getGananciaPorcentual()
-    mrsi += ersi.getGananciaPorcentual()
-    mrsima += rsima.getGananciaPorcentual()
-
-    
-
-    print(i + "\tCocodrilo: " + str(round(p.getGananciaPorcentual(),1)) + "% (" + str(day_cocodrilo) + ")" +
-    "\tComprar y Retener: " + str(round(bah.getGananciaPorcentual(),1)) + "% (" + str(day_bah) + ")" +
-    "\tRSI: " + str(round(ersi.getGananciaPorcentual(),1)) + "% (" + str(day_ersi) + ")" +
-    "\tRSI Cocodrilo: " + str(round(rsima.getGananciaPorcentual(),1)) + "% (" + str(day_rsima) + ")" +
-    "\tRSI Cocodrilo: " + str(round(e_r_m.get_ganancia_neta(),1)) + "% (" + str(e_r_m.get_day_in()) + ")")
+    print(i + "\tCocodrilo: " + str(e_c.get_ganancia_porcentual()) + "% (" + str(e_c.get_day_in()) + ")" +
+    "\tComprar y Retener: " + str(e_bah.get_ganancia_porcentual()) + "% (" + str(e_bah.get_day_in()) + ")" +
+    "\tRSI: " + str(e_rsi.get_ganancia_porcentual()) + "% (" + str(e_rsi.get_day_in()) + ")" +
+    "\tRSI Cocodrilo: " + str(round(e_r_m.get_ganancia_porcentual(),1)) + "% (" + str(e_r_m.get_day_in()) + ")")
 print("--------------------------------------------------------------------------------------------")
 
 mc = mc / len(diccinario)
@@ -99,6 +87,12 @@ print("\n\n*********************************************************************
 print("CORRELACION ENTRE ACTIVOS")
 print( correlacion( diccinario ) )
 print("***********************************************************************")
+
+print("\n\n***********************************************************************")
+print("ANALISIS DE DATOS")
+desviacion( diccinario['AAPL'] )
+print("***********************************************************************")
+
 
 #aapl.Close.plot()
 
