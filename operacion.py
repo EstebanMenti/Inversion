@@ -139,4 +139,7 @@ class operatiOnOnActve():
                 resultados = diferencia + resultados
         
         return( resultados.days )
+    
+    def get_ganacia_porcentual_diario(self):
+        return round(self.get_ganancia_porcentual() / self.get_day_in(), 4)
 

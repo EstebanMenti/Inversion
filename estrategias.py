@@ -57,7 +57,7 @@ class buy_and_hold( operatiOnOnActve ):
         
 class rsi_sobrecompra_sobreventa( operatiOnOnActve ):
     #Utiliza limite de sobre compra y sobre venta para ejecutar la accion
-    def __init__(self, ticket, df, rsi = 20, sobrecompra=(70/100), sobreventa=(30/100), tipo='accionbyma'):
+    def __init__(self, ticket, df, rsi = 14, sobrecompra=(70/100), sobreventa=(30/100), tipo='accionbyma'):
         self.__ticket = ticket 
         self.__df = df
         self.__rsi = rsi
@@ -86,7 +86,7 @@ class rsi_sobrecompra_sobreventa( operatiOnOnActve ):
         
 
 class estrategia_rsi_media( operatiOnOnActve ):
-    def __init__(self, ticket, df, rsi = 20, tipo ='accionbyma'):
+    def __init__(self, ticket, df, rsi = 14, tipo ='accionbyma'):
         
         self.__df = df
         self.__rsi = rsi
@@ -121,4 +121,18 @@ class estrategia_rsi_media( operatiOnOnActve ):
                 
         if(super().get_cantidad_activos() != 0 ):
             super().load_operacion(self.__df.values[i,0], self.__df.index[i].to_pydatetime(),1, 'venta')
+
+class estrategia_rsi_desviacion( operatiOnOnActve ):
+    def __init__(self, ticket, df, rsi = 20, sobrecompra=(70/100), sobreventa=(30/100), tipo ='accionbyma'):
+        self.__df = df
+        self.__rsi = rsi
+        super().__init__(ticket = ticket, tipo = tipo)
+        self.ejecutar()
     
+    def ejecutar(self):
+        _rsi = pd.DataFrame(rsi(self.__df, self.__rsi, add=False) )
+        df = pd.DataFrame( _rsi.describe() )
+        min = df.values[3,0]
+        media = df.values[5,0]
+        max = df.values[6,0]
+        
