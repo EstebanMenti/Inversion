@@ -121,8 +121,63 @@ print("ANALISIS DE ESTRATEGIA")
 # --- Descartar todas aquellas acciones en que el rendimiento sea negativo o proximos a cero 
 
 
-#conformar un dataFrama
+#Conforma una lista de lista.  Cada sub-lista contiene las clases de estrategias sonbre un activo.
+lista_estrategia_activo=[]
+for i in diccinario:
+
+    lista_estrategia = []
+
+    df = pd.DataFrame( diccinario[ i ]['Close'] )
+    
+    lista_estrategia.append( cocodrilo( i, df ) )
+    lista_estrategia.append( buy_and_hold(i, diccinario[ i ]) )
+    lista_estrategia.append( rsi_sobrecompra_sobreventa( i, diccinario[ i ] ) )
+    lista_estrategia.append( estrategia_rsi_media(i, diccinario[ i ]) )
+
+    _rsi = pd.DataFrame(rsi(diccinario[ i ], 20, add=False))
+    df = pd.DataFrame( _rsi.describe() )
+    min = df.values[3,0]
+    max = df.values[6,0]
+
+    lista_estrategia.append( rsi_sobrecompra_sobreventa( i, diccinario[ i ], sobrecompra= max, sobreventa=min ) )
+
+    lista_estrategia_activo.append( lista_estrategia )
+
+#Busca las acciones que estan dando mayor ganancia
+df = pd.DataFrame( columns=['RSI'] )
+for i in range(0, len(lista_estrategia_activo)):
+    estrategia = lista_estrategia_activo[i][3]
+    df = df.append({'RSI' : estrategia.get_ganacia_porcentual_diario()} , ignore_index=True)
+
+print( df )
+
+print( df.describe() )
+minimo = df.quantile(50/100).values[0]
+print("Valor minimo: ", minimo)
+#eliminar de la lista de estrategias, todas aquellas que tengan un rendimiento menor al 50%
+for i in range(0, len(lista_estrategia_activo)):
+    estrategia = lista_estrategia_activo[i][3]
+    if( estrategia.get_ganacia_porcentual_diario() < minimo ):
+        print( estrategia.get_ticket() )    
+
+
+
+
+
+"""
+print("Longitud de lista de estrategia: ",  len(lista_estrategia_activo ) )
+print( "Longitud de estrategia: ", len(lista_estrategia_activo[0] ) )
+
+estrategia = lista_estrategia_activo[0][0]
+print( type(estrategia)  )
+print( estrategia.get_ticket()  )
+"""
+
+
+
+"""
 resultad= pd.DataFrame(columns=['RSI'])
+
 
 min_estrategia = 5000
 for i in diccinario:
@@ -145,7 +200,7 @@ for i in diccinario:
 
 
 print(resultad.describe())
-
+"""
 
 
 print("\n\n***********************************************************************")
