@@ -32,7 +32,7 @@ tickers = ['AGRO.BA','ALUA.BA','AUSO.BA','BHIP.BA','BMA.BA','BOLT.BA','BPAT.BA',
            'OEST.BA','PAMP.BA','PATA.BA','PGR.BA','ROSE.BA','SAMI.BA','SEMI.BA','SUPV.BA',
            'TECO2.BA','TGNO4.BA','TGSU2.BA','TRAN.BA','TXAR.BA','YPFD.BA']
 
-tickersUSA = ['AAPL','GGAL.BA','GGAL','MSFT','GLOB','KO','FB','INTC','GE','MELI','GOOG','IBM','XOM', 'SPY'] 
+tickersUSA = ['AAPL','TSLA','BABA','GGAL.BA','GGAL','MSFT','GLOB','KO','FB','INTC','GE','MELI','GOOG','IBM','XOM', 'SPY'] 
 simbolos = tickersUSA 
 
 print("\n\n***********************************************************************")
@@ -42,86 +42,18 @@ startdate = date.date.today() - date.timedelta(365*años)
 enddate   = date.date.today()
 print("Periodo. Desde: " + str(startdate) + " Hasta: " + str(enddate) )
 diccinario = download(tickets = simbolos, años = años, enddate=enddate, intervalo='1d')
+print("***********************************************************************")
 
 print("\n\n***********************************************************************")
-print('ESTRATEGIAS')
-
-mc = 0
-mbah = 0
-mrsi = 0
-mrsima = 0
-for i in diccinario:
-
-    a = pd.DataFrame( diccinario[ i ]['Close'] )
-    e_c = cocodrilo( i, a )
-    e_bah = buy_and_hold(i, diccinario[ i ])
-    e_rsi = rsi_sobrecompra_sobreventa( i, diccinario[ i ] )
-    e_r_m = estrategia_rsi_media(i, diccinario[ i ])
-
-    _rsi = pd.DataFrame(rsi(diccinario[ i ], 20, add=False))
-    df = pd.DataFrame( _rsi.describe() )
-    min = df.values[3,0]
-    media = df.values[5,0]
-    max = df.values[6,0]
-
-    e_rsi_d = rsi_sobrecompra_sobreventa( i, diccinario[ i ], sobrecompra= max, sobreventa=min )
-
-
-    
-    mc += e_c.get_ganacia_porcentual_diario()
-    mbah += e_bah.get_ganacia_porcentual_diario()
-    mrsi += e_rsi.get_ganacia_porcentual_diario()
-    mrsima += e_r_m.get_ganacia_porcentual_diario()
-    
-    print(i + "\tCOC: " + str(e_c.get_ganacia_porcentual_diario() )+ 
-    "\tB&R: " + str(e_bah.get_ganacia_porcentual_diario() )+
-    "\tRSI: " + str(e_rsi.get_ganacia_porcentual_diario() )+
-    "\tRSI-B: " + str(e_rsi_d.get_ganacia_porcentual_diario() )+
-    "\tM_RSI: " + str(e_r_m.get_ganacia_porcentual_diario() ) )
-    
-    """
-    print(i + "\tCOC: " + str(e_c.get_ganancia_porcentual()) + "% (" + str(e_c.get_day_in()) + ")" + 
-    "\tB&R: " + str(e_bah.get_ganancia_porcentual()) + "% (" + str(e_bah.get_day_in()) + ")" +
-    "\tRSI: " + str(e_rsi.get_ganancia_porcentual()) + "% (" + str(e_rsi.get_day_in()) + ")" +
-    "\tRSI-B: " + str(e_rsi_d.get_ganancia_porcentual()) + "% (" + str(e_rsi_d.get_day_in()) + ")" +
-    "\tM_RSI: " + str(round(e_r_m.get_ganancia_porcentual(),1)) + "% (" + str(e_r_m.get_day_in()) + ")")
-    """
-print("--------------------------------------------------------------------------------------------")
-mc = mc / len(diccinario)
-mbah /= len(diccinario)
-mrsi /= len(diccinario)
-mrsima /= len(diccinario)
-print( "MEDIA")
-print("\tCocodrilo: " + str(round(mc,2))+ "%" + 
-"\tComprar y Retener: " + str(round(mbah,2)) +"%" +  
-"\tRSI: " + str(round(mrsi,2)) + "%"
-"\tRSI Cocodrilo: " + str(round(mrsima,2)) +"%")
+print('ANALISIS DE DATOS')
+max( diccinario['AAPL'] )
 
 print("***********************************************************************")
-#Generacion de un dataFrame
-#Create a DataFrame object
-df = pd.DataFrame(columns=['Name', 'COC' , 'B&R', 'RSI', 'MRSI'])
-
-for i in diccinario:
-
-    a = pd.DataFrame( diccinario[ i ]['Close'] )
-    e_c = cocodrilo( i, a )
-    e_bah = buy_and_hold(i, diccinario[ i ])
-    e_rsi = rsi_sobrecompra_sobreventa( i, diccinario[ i ] )
-    e_r_m = estrategia_rsi_media(i, diccinario[ i ])
-
-    df = df.append({'Name' : i , 'COC' : e_c.get_ganancia_porcentual(), 'B&R' : e_bah.get_ganancia_porcentual(), 'RSI': e_rsi.get_ganancia_porcentual(), 'MRSI': e_r_m.get_ganancia_porcentual() } , ignore_index=True)
-
 
 print("\n\n***********************************************************************")
-print("CORRELACION ENTRE ACTIVOS")
-print( correlacion( diccinario ) )
-print("***********************************************************************")
-print("ANALISIS DE ESTRATEGIA")
-# --- Descartar todas aquellas acciones en que el rendimiento sea negativo o proximos a cero 
+print('CALCULO DE ESTRATEGIAS')
 
-
-#Conforma una lista de lista.  Cada sub-lista contiene las clases de estrategias sonbre un activo.
+#Conforma una lista de lista.  Cada sub-lista contiene las clases de estrategias sobre un activo.
 lista_estrategia_activo=[]
 for i in diccinario:
 
@@ -143,64 +75,37 @@ for i in diccinario:
 
     lista_estrategia_activo.append( lista_estrategia )
 
+print("\n\n***********************************************************************")
+print('SELECCION DE ESTRATEGIAS DE MAYOR RENDIMIENTO')
 #Busca las acciones que estan dando mayor ganancia
 df = pd.DataFrame( columns=['RSI'] )
 for i in range(0, len(lista_estrategia_activo)):
     estrategia = lista_estrategia_activo[i][3]
     df = df.append({'RSI' : estrategia.get_ganacia_porcentual_diario()} , ignore_index=True)
 
-print( df )
-
-print( df.describe() )
 minimo = df.quantile(50/100).values[0]
-print("Valor minimo: ", minimo)
-#eliminar de la lista de estrategias, todas aquellas que tengan un rendimiento menor al 50%
+
+#Eliminar de la lista de estrategias, todas aquellas que tengan un rendimiento menor al 50%
+lista_estrategia_activo = [x for x in lista_estrategia_activo if (x[3].get_ganacia_porcentual_diario() > minimo) ]
+
+print("\n\n***********************************************************************")
+print('IMPRIME LAS ESTRATEGIAS\n')
+
 for i in range(0, len(lista_estrategia_activo)):
-    estrategia = lista_estrategia_activo[i][3]
-    if( estrategia.get_ganacia_porcentual_diario() < minimo ):
-        print( estrategia.get_ticket() )    
+    ticket =  lista_estrategia_activo[i][3].get_ticket()
+    print(ticket + '\t', end="")
+    for x in range( 0, len(lista_estrategia_activo[ i ] )):
+        ganancia = lista_estrategia_activo[ i ][ x ].get_ganancia_porcentual()
+        dias =  lista_estrategia_activo[ i ][ x ].get_day_in()
+        print(str(ganancia) + ' (' + str(dias) +  ')\t', end='' )
 
+    print("")    
+print("***********************************************************************")
 
-
-
-
-"""
-print("Longitud de lista de estrategia: ",  len(lista_estrategia_activo ) )
-print( "Longitud de estrategia: ", len(lista_estrategia_activo[0] ) )
-
-estrategia = lista_estrategia_activo[0][0]
-print( type(estrategia)  )
-print( estrategia.get_ticket()  )
-"""
-
-
-
-"""
-resultad= pd.DataFrame(columns=['RSI'])
-
-
-min_estrategia = 5000
-for i in diccinario:
-
-    a = pd.DataFrame( diccinario[ i ]['Close'] )
-    e_c = cocodrilo( i, a )
-    e_bah = buy_and_hold(i, diccinario[ i ])
-    e_rsi = rsi_sobrecompra_sobreventa( i, diccinario[ i ] )
-    e_r_m = estrategia_rsi_media(i, diccinario[ i ])
-
-    _rsi = pd.DataFrame(rsi(diccinario[ i ], 20, add=False))
-    df = pd.DataFrame( _rsi.describe() )
-    min = df.values[3,0]
-    
-    max = df.values[6,0]
-    
-    e_rsi_d = rsi_sobrecompra_sobreventa( i, diccinario[ i ], sobrecompra= max, sobreventa=min )
-
-    resultad=resultad.append({'RSI' : e_rsi_d.get_ganacia_porcentual_diario()} , ignore_index=True)
-
-
-print(resultad.describe())
-"""
+print("\n\n***********************************************************************")
+print("CORRELACION ENTRE ACTIVOS")
+print( correlacion( diccinario ) )
+print("***********************************************************************")
 
 
 print("\n\n***********************************************************************")

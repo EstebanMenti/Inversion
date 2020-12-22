@@ -1,5 +1,6 @@
 import os
 import pandas as pd #pip install pandas
+#https://bbnb.media/noticias/python-for-at/ta-lib-una-libreria-para-analisis-tecnico-al-alcance-de-todos/
 
 #Determina la media movil de "n" ruedas
 def ma(df, n, add=True):
@@ -64,11 +65,4 @@ def rsi(ticket, n, add=True):
     if(add == True):
         return ticket
     return ticket['RSI_' + str(n)]
-    """
-    if(add == True):
-        ticket = ticket.join(rsi)
-        ticket.set_index('Date', inplace=True)
-    else:
-        ticket = rsi
-    return(ticket)
-    """
+ 
