@@ -9,10 +9,16 @@ def download(tickets, enddate = date.date.today(), años=10, intervalo ='1d' ):
     startdate = date.date.today() - date.timedelta(365*años)
     enddate   = date.date.today()
 
+    #print("******")
+    #print(type(yf.Ticker("MSFT").history(period="1mo")))
+    #print(type(yf.download("MSFT", start=startdate, end=enddate , interval = intervalo)))
+    #print("******")
+    #https://finance.yahoo.com/quote/QQQ/holdings?p=QQQ
+
     #Baja los datos y los ordena en un diccionario
     diccionario={}
     for indice in range(0, len(tickets)):
-        df = yf.download(tickets[indice], start=startdate, end=enddate , interval = intervalo)
+        df = yf.download(tickets[indice], start=startdate, end=enddate , interval = intervalo, progress=False)
         diccionario[ tickets[indice] ] = df.dropna() 
     
     #print(diccionario)

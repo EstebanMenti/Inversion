@@ -32,8 +32,12 @@ tickers = ['AGRO.BA','ALUA.BA','AUSO.BA','BHIP.BA','BMA.BA','BOLT.BA','BPAT.BA',
            'OEST.BA','PAMP.BA','PATA.BA','PGR.BA','ROSE.BA','SAMI.BA','SEMI.BA','SUPV.BA',
            'TECO2.BA','TGNO4.BA','TGSU2.BA','TRAN.BA','TXAR.BA','YPFD.BA']
 
+qqq = ["AAPL", "MSFT", "AMZN", "TSLA", "FB", "GOOGL", "GOOG", "NVDA", "PYPL", "ADBE"]
 tickersUSA = ['AAPL','TSLA','BABA','GGAL.BA','GGAL','MSFT','GLOB','KO','FB','INTC','GE','MELI','GOOG','IBM','XOM', 'SPY'] 
-simbolos = tickersUSA 
+
+
+
+simbolos = qqq 
 
 print("\n\n***********************************************************************")
 print("DOWNLOAD DATA")

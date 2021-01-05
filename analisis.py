@@ -13,7 +13,7 @@ Determinar como se comporta en la suba:
 Para ello se debe hacer:
     *- Establecer cuando esta en suba el activo.
     *- Establecer cuando esta en baja el activo. 
-    *- Hacer un analisis de indicadores entre dichas fechas
+    *- Hacer un analisis de indicadores entre dichas fechas.
 """
 def max( df ):
     new_df = pd.DataFrame()
@@ -24,7 +24,7 @@ def max( df ):
     for i in range(0, len( df )):
         if( max < df['Close'][ i ] ):
             max = df['Close'][ i ]
-    print( max )
+    #print( max )
         #print( str(df['Close'][ i ]) )
     
     
